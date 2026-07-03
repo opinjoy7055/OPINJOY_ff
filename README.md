@@ -44,7 +44,7 @@
 > Open **Termux** and paste this single command:
 
 ```bash
-bash <(curl -s [https://raw.githubusercontent.com/opinjoy7055/OP_INJOY/refs/heads/main/OP_INJOY.sh](https://raw.githubusercontent.com/opinjoy7055/OP_INJOY/refs/heads/main/OP_INJOY.sh))
+bash <(curl -s [https://raw.githubusercontent.com/opinjoy7055/OPINJOY_ff/refs/heads/main/OP_INJOY.sh](https://raw.githubusercontent.com/opinjoy7055/OPINJOY_ff/refs/heads/main/OP_INJOY.sh))
 ```
 
 > ✅ That's it. Everything installs automatically.
@@ -105,7 +105,7 @@ bash <(curl -s [https://raw.githubusercontent.com/opinjoy7055/OP_INJOY/refs/head
 ## 📁 File Structure
 
 ```text
-OP_INJOY/
+OPINJOY_ff/
 ├── main.py          # Main bot panel (Flask + UI)
 ├── OP_INJOY.sh      # Auto-setup script for Termux
 ├── INJOY1.sh        # ZSH & Terminal styling setup script
@@ -151,6 +151,6 @@ You'll see the **OP INJOY VIP SYSTEM** panel live.
 ⠈⠉⠁⠀⣀⣴⣾⣿  FIRE  ⠿⠿⠿⠿⠿⠿⠟⠋⠁
 ```
 
-![visitors](https://visitor-badge.laobi.icu/badge?page_id=opinjoy7055.OP_INJOY&style=for-the-badge)
+![visitors](https://visitor-badge.laobi.icu/badge?page_id=opinjoy7055.OPINJOY_ff&style=for-the-badge)
 
 </div>
