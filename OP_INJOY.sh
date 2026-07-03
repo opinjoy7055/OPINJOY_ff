@@ -397,7 +397,7 @@ echo ""
 # ============================================================
 # STEP 9 — Clone repo & run main.py
 # ============================================================
-REPO_URL="https://github.com/OP_INJOY/New-update-bot.git"
+REPO_URL="https://github.com/opinjoy7055/OPINJOY_ff.git"
 REPO_DIR="$HOME/$(basename "$REPO_URL" .git)"
 
 echo -e "${CYAN}${BOLD}  [*] Cloning repository...${RESET}"
