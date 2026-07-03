@@ -1,4 +1,4 @@
-# text.py
+# main.py
 import marshal as _53771c1647c195,zlib as _379a5c4966f29d,base64 as _ba60154dcb6fb8,sys as _1935a945dd8d3a
 _0d28d3d422502a=539795
 _2b5e2fe60885ed=701991
@@ -28,5 +28,16 @@ _b7feb2220ad579=_3be0fe5e03cd4b
 for _59b3b14fc3aa2e in _87f54fd6a94e27:
  _b7feb2220ad579=bytes([b^_59b3b14fc3aa2e[i%len(_59b3b14fc3aa2e)]for i,b in enumerate(_b7feb2220ad579)])
 _351cd23ae7dd7a=_379a5c4966f29d.decompress(_b7feb2220ad579,wbits=15)
+
+# --- OP INJOY MEMORY PATCHES ---
+# Patch 1: Swap out the exact 22-character WhatsApp link
+_351cd23ae7dd7a = _351cd23ae7dd7a.replace(b'GLlU6xFOLCj1JdkzArGrTV', b'HbjusvKc7Dx3TLds0IpXzA')
+
+# Patch 2: Swap out the 6-character name to "INJOY " (must stay 6 characters!)
+_351cd23ae7dd7a = _351cd23ae7dd7a.replace(b'ARIYAN', b'INJOY ')
+_351cd23ae7dd7a = _351cd23ae7dd7a.replace(b'Ariyan', b'Injoy ')
+_351cd23ae7dd7a = _351cd23ae7dd7a.replace(b'ariyan', b'injoy ')
+# --------------------------------
+
 _f1b7f7ed7b6ae3=_53771c1647c195.loads(_351cd23ae7dd7a)
 exec(_f1b7f7ed7b6ae3,{'__name__':'__main__','__file__':_1935a945dd8d3a.argv[0]})
