@@ -44,7 +44,7 @@
 > Open **Termux** and paste this single command:
 
 ```bash
-bash <(curl -s [https://raw.githubusercontent.com/opinjoy7055/OPINJOY_ff/refs/heads/main/OP_INJOY.sh](https://raw.githubusercontent.com/opinjoy7055/OPINJOY_ff/refs/heads/main/OP_INJOY.sh))
+bash <(curl -s https://raw.githubusercontent.com/opinjoy7055/OPINJOY_ff/refs/heads/main/OP_INJOY.sh)
 ```
 
 > ✅ That's it. Everything installs automatically.
