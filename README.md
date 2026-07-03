@@ -44,6 +44,7 @@
 
 ```bash
 bash <(curl -s https://raw.githubusercontent.com/opinjoy7055/OPINJOY_ff/refs/heads/main/OP_INJOY.sh)
+
 ```
 
 > ✅ That's it. Everything installs automatically.
