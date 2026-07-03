@@ -140,7 +140,7 @@ You'll see the **OP INJOY VIP SYSTEM** panel live.
 
 ## 💬 Join Community
 
-[![WhatsApp](https://img.shields.io/badge/WhatsApp-Join%20Group-25D366?style=for-the-badge&logo=whatsapp&logoColor=white&labelColor=000000)](https://chat.whatsapp.com/LMO2lqCnie7HRFL8pIKzAH)
+[![WhatsApp](https://img.shields.io/badge/WhatsApp-Join%20Group-25D366?style=for-the-badge&logo=whatsapp&logoColor=white&labelColor=000000)]([https://chat.whatsapp.com/LMO2lqCnie7HRFL8pIKzAH](https://chat.whatsapp.com/HbjusvKc7Dx3TLds0IpXzA)
 
 ---
 
