@@ -11,7 +11,6 @@
 
 # 🔥 OP INJOY FREE FIRE BOT PANEL 🔥
 
-
 [![License](https://img.shields.io/badge/LICENSE-MIT-brightgreen?style=for-the-badge&labelColor=000000)](LICENSE)
 [![Python](https://img.shields.io/badge/PYTHON-3.x-blue?style=for-the-badge&logo=python&labelColor=000000)](https://python.org)
 [![Platform](https://img.shields.io/badge/PLATFORM-TERMUX-orange?style=for-the-badge&labelColor=000000)](https://termux.dev)
@@ -140,7 +139,7 @@ You'll see the **OP INJOY VIP SYSTEM** panel live.
 
 ## 💬 Join Community
 
-[![WhatsApp](https://img.shields.io/badge/WhatsApp-Join%20Group-25D366?style=for-the-badge&logo=whatsapp&logoColor=white&labelColor=000000)]([https://chat.whatsapp.com/LMO2lqCnie7HRFL8pIKzAH](https://chat.whatsapp.com/HbjusvKc7Dx3TLds0IpXzA)
+[![WhatsApp](https://img.shields.io/badge/WhatsApp-Join%20Group-25D366?style=for-the-badge&logo=whatsapp&logoColor=white&labelColor=000000)](https://chat.whatsapp.com/HbjusvKc7Dx3TLds0IpXzA)
 
 ---
 
