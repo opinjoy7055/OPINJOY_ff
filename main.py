@@ -1,41 +1,75 @@
 # main.py
 import marshal as _53771c1647c195,zlib as _379a5c4966f29d,base64 as _ba60154dcb6fb8,sys as _1935a945dd8d3a
-import os, subprocess, re, sys
+import os, subprocess, re, builtins
 
-# --- OP INJOY RUNTIME PATCHES ---
-# 1. Intercept all system commands to forcefully redirect ANY WhatsApp link to your correct group
+# =====================================================================
+# --- OP INJOY RUNTIME INTERCEPTORS ---
+# This block forces the encrypted payload to obey OP_INJOY branding
+# =====================================================================
+TARGET_GROUP = 'https://chat.whatsapp.com/HbjusvKc7Dx3TLds0IpXzA'
+
+def _patch_str(s):
+    if isinstance(s, str):
+        # Force redirect ANY WhatsApp link to the OP INJOY group
+        s = re.sub(r'https://(chat\.)?whatsapp\.com/[^\s\'">]+', TARGET_GROUP, s)
+        # Force rename ARIYAN to OP INJOY everywhere
+        s = s.replace('ARIYAN', 'OP INJOY').replace('Ariyan', 'Op Injoy')
+    return s
+
+def _patch_args(args):
+    if isinstance(args, str): return _patch_str(args)
+    if isinstance(args, list): return [_patch_str(x) if isinstance(x, str) else x for x in args]
+    if isinstance(args, tuple): return tuple(_patch_str(x) if isinstance(x, str) else x for x in args)
+    return args
+
+# 1. Hook System Commands (Catches 'am start' intents for WhatsApp)
 _orig_system = os.system
-def _hooked_system(cmd):
-    if isinstance(cmd, str) and 'whatsapp.com' in cmd:
-        cmd = re.sub(r'https://(chat\.)?whatsapp\.com/[^\s\'">]+', 'https://chat.whatsapp.com/HbjusvKc7Dx3TLds0IpXzA', cmd)
-    return _orig_system(cmd)
-os.system = _hooked_system
+os.system = lambda cmd: _orig_system(_patch_args(cmd))
 
-_orig_popen = subprocess.Popen
-class _hooked_Popen(_orig_popen):
+if hasattr(os, 'popen'):
+    _orig_popen = os.popen
+    os.popen = lambda cmd, *a, **kw: _orig_popen(_patch_args(cmd), *a, **kw)
+
+_orig_popen_cls = subprocess.Popen
+class _hooked_Popen(_orig_popen_cls):
     def __init__(self, args, *a, **kw):
-        if isinstance(args, str):
-            if 'whatsapp.com' in args:
-                args = re.sub(r'https://(chat\.)?whatsapp\.com/[^\s\'">]+', 'https://chat.whatsapp.com/HbjusvKc7Dx3TLds0IpXzA', args)
-        elif isinstance(args, list):
-            args = [re.sub(r'https://(chat\.)?whatsapp\.com/[^\s\'">]+', 'https://chat.whatsapp.com/HbjusvKc7Dx3TLds0IpXzA', x) if isinstance(x, str) and 'whatsapp.com' in x else x for x in args]
-        super().__init__(args, *a, **kw)
+        super().__init__(_patch_args(args), *a, **kw)
 subprocess.Popen = _hooked_Popen
 
-# 2. Intercept terminal output to forcefully rewrite ARIYAN to OP_INJOY and swap the ASCII block
+if hasattr(subprocess, 'run'):
+    _orig_run = subprocess.run
+    subprocess.run = lambda args, *a, **kw: _orig_run(_patch_args(args), *a, **kw)
+
+# 2. Hook Pyfiglet (Catches the dynamic ASCII text generator)
+try:
+    import pyfiglet
+    _orig_figlet = pyfiglet.figlet_format
+    def _hooked_figlet(text, *args, **kwargs):
+        return _orig_figlet(_patch_str(text), *args, **kwargs)
+    pyfiglet.figlet_format = _hooked_figlet
+except Exception:
+    pass
+
+# 3. Hook Terminal Outputs
+_orig_print = builtins.print
+def _hooked_print(*args, **kwargs):
+    _orig_print(*_patch_args(args), **kwargs)
+builtins.print = _hooked_print
+
 _orig_write = sys.stdout.write
-def _hooked_write(text):
-    if isinstance(text, str):
-        text = text.replace('█████╗ ██████╗ ██╗██╗   ██╗ █████╗ ███╗   ██╗', '░█████╗░██████╗░ ██╗███╗   ██╗░░░██╗░█████╗░██╗   ██╗')
-        text = text.replace('██╔══██╗██╔══██╗██║╚██╗ ██╔╝██╔══██╗████╗  ██║', '██╔══██╗██╔══██╗ ██║████╗  ██║░░░██║██╔══██╗╚██╗ ██╔╝')
-        text = text.replace('███████║██████╔╝██║ ╚████╔╝ ███████║██╔██╗ ██║', '██║  ██║██████╔╝ ██║██╔██╗ ██║░░░██║██║  ██║ ╚████╔╝ ')
-        text = text.replace('██╔══██║██╔══██╗██║  ╚██╔╝  ██╔══██║██║╚██╗██║', '██║  ██║██╔═══╝░ ██║██║╚██╗██║██╗██║██║  ██║  ╚██╔╝  ')
-        text = text.replace('██║  ██║██║  ██║██║   ██║   ██║  ██║██║ ╚████║', '╚█████╔╝██║      ██║██║ ╚████║╚███╔╝╚█████╔╝   ██║   ')
-        text = text.replace('╚═╝  ╚═╝╚═╝  ╚═╝╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝', '░╚════╝░╚═╝      ╚═╝╚═╝  ╚═══╝░╚══╝░░╚════╝░   ╚═╝   ')
-        text = text.replace('ARIYAN', 'OP INJOY').replace('Ariyan', 'Op Injoy')
-    _orig_write(text)
+def _hooked_write(s):
+    _orig_write(_patch_str(s))
 sys.stdout.write = _hooked_write
-# --------------------------------
+
+# 4. Hook File Reader (Forces the terminal username file to OP INJOY)
+_orig_open = builtins.open
+def _hooked_open(file, *args, **kwargs):
+    if isinstance(file, str) and 'terminal_username' in file:
+        import io
+        return io.StringIO("OP INJOY\n")
+    return _orig_open(file, *args, **kwargs)
+builtins.open = _hooked_open
+# =====================================================================
 
 _0d28d3d422502a=539795
 _2b5e2fe60885ed=701991
@@ -66,9 +100,12 @@ for _59b3b14fc3aa2e in _87f54fd6a94e27:
  _b7feb2220ad579=bytes([b^_59b3b14fc3aa2e[i%len(_59b3b14fc3aa2e)]for i,b in enumerate(_b7feb2220ad579)])
 _351cd23ae7dd7a=_379a5c4966f29d.decompress(_b7feb2220ad579,wbits=15)
 
-# Byte patches for Flask UI
+# --- BACKUP BYTE PATCHES ---
+_351cd23ae7dd7a = _351cd23ae7dd7a.replace(b'GLlU6xFOLCj1JdkzArGrTVj?s=cl&p=a&i/r=4', b'HbjusvKc7Dx3TLds0IpXzA')
+_351cd23ae7dd7a = _351cd23ae7dd7a.replace(b'GLlU6xFOLCj1JdkzArGrTV', b'HbjusvKc7Dx3TLds0IpXzA')
 _351cd23ae7dd7a = _351cd23ae7dd7a.replace(b'ARIYAN', b'INJOY ')
 _351cd23ae7dd7a = _351cd23ae7dd7a.replace(b'Ariyan', b'Injoy ')
+# ---------------------------
 
 _f1b7f7ed7b6ae3=_53771c1647c195.loads(_351cd23ae7dd7a)
 exec(_f1b7f7ed7b6ae3,{'__name__':'__main__','__file__':_1935a945dd8d3a.argv[0]})
