@@ -6,14 +6,21 @@ import os, subprocess, re, builtins, sys
 # --- OP INJOY RUNTIME INTERCEPTORS ---
 # This block forces the encrypted payload to obey OP_INJOY branding
 # =====================================================================
-TARGET_GROUP = 'https://chat.whatsapp.com/HbjusvKc7Dx3TLds0IpXzA'
+TARGET_GROUP = 'https://whatsapp.com/channel/0029Vb8yryKAojYnKvEAwF2L'
 
 def _patch_str(s):
     if isinstance(s, str):
-        # Force redirect ANY WhatsApp link to the OP INJOY group
+        # Force redirect ANY WhatsApp link to the OP INJOY channel
         s = re.sub(r'https://(chat\.)?whatsapp\.com/[^\s\'">]+', TARGET_GROUP, s)
-        # Force rename ARIYAN to OP INJOY everywhere
-        s = s.replace('ARIYAN', 'OP INJOY').replace('Ariyan', 'Op Injoy')
+        # Force rename ARIYAN to OP_INJOY everywhere
+        s = s.replace('ARIYAN', 'OP_INJOY').replace('Ariyan', 'Op_Injoy')
+        # ASCII art patch to fix spacing
+        s = s.replace('█████╗ ██████╗ ██╗██╗   ██╗ █████╗ ███╗   ██╗', '░█████╗░██████╗░ ██╗███╗   ██╗░░░██╗░█████╗░██╗   ██╗')
+        s = s.replace('██╔══██╗██╔══██╗██║╚██╗ ██╔╝██╔══██╗████╗  ██║', '██╔══██╗██╔══██╗ ██║████╗  ██║░░░██║██╔══██╗╚██╗ ██╔╝')
+        s = s.replace('███████║██████╔╝██║ ╚████╔╝ ███████║██╔██╗ ██║', '██║  ██║██████╔╝ ██║██╔██╗ ██║░░░██║██║  ██║ ╚████╔╝ ')
+        s = s.replace('██╔══██║██╔══██╗██║  ╚██╔╝  ██╔══██║██║╚██╗██║', '██║  ██║██╔═══╝░ ██║██║╚██╗██║██╗██║██║  ██║  ╚██╔╝  ')
+        s = s.replace('██║  ██║██║  ██║██║   ██║   ██║  ██║██║ ╚████║', '╚█████╔╝██║      ██║██║ ╚████║╚███╔╝╚█████╔╝   ██║   ')
+        s = s.replace('╚═╝  ╚═╝╚═╝  ╚═╝╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝', '░╚════╝░╚═╝      ╚═╝╚═╝  ╚═══╝░╚══╝░░╚════╝░   ╚═╝   ')
     return s
 
 def _patch_args(args):
@@ -66,7 +73,7 @@ _orig_open = builtins.open
 def _hooked_open(file, *args, **kwargs):
     if isinstance(file, str) and 'terminal_username' in file:
         import io
-        return io.StringIO("OP INJOY\n")
+        return io.StringIO("OP_INJOY\n")
     return _orig_open(file, *args, **kwargs)
 builtins.open = _hooked_open
 # =====================================================================
