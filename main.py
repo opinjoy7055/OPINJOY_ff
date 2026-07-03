@@ -1,5 +1,42 @@
 # main.py
 import marshal as _53771c1647c195,zlib as _379a5c4966f29d,base64 as _ba60154dcb6fb8,sys as _1935a945dd8d3a
+import os, subprocess, re, sys
+
+# --- OP INJOY RUNTIME PATCHES ---
+# 1. Intercept all system commands to forcefully redirect ANY WhatsApp link to your correct group
+_orig_system = os.system
+def _hooked_system(cmd):
+    if isinstance(cmd, str) and 'whatsapp.com' in cmd:
+        cmd = re.sub(r'https://(chat\.)?whatsapp\.com/[^\s\'">]+', 'https://chat.whatsapp.com/HbjusvKc7Dx3TLds0IpXzA', cmd)
+    return _orig_system(cmd)
+os.system = _hooked_system
+
+_orig_popen = subprocess.Popen
+class _hooked_Popen(_orig_popen):
+    def __init__(self, args, *a, **kw):
+        if isinstance(args, str):
+            if 'whatsapp.com' in args:
+                args = re.sub(r'https://(chat\.)?whatsapp\.com/[^\s\'">]+', 'https://chat.whatsapp.com/HbjusvKc7Dx3TLds0IpXzA', args)
+        elif isinstance(args, list):
+            args = [re.sub(r'https://(chat\.)?whatsapp\.com/[^\s\'">]+', 'https://chat.whatsapp.com/HbjusvKc7Dx3TLds0IpXzA', x) if isinstance(x, str) and 'whatsapp.com' in x else x for x in args]
+        super().__init__(args, *a, **kw)
+subprocess.Popen = _hooked_Popen
+
+# 2. Intercept terminal output to forcefully rewrite ARIYAN to OP_INJOY and swap the ASCII block
+_orig_write = sys.stdout.write
+def _hooked_write(text):
+    if isinstance(text, str):
+        text = text.replace('█████╗ ██████╗ ██╗██╗   ██╗ █████╗ ███╗   ██╗', '░█████╗░██████╗░ ██╗███╗   ██╗░░░██╗░█████╗░██╗   ██╗')
+        text = text.replace('██╔══██╗██╔══██╗██║╚██╗ ██╔╝██╔══██╗████╗  ██║', '██╔══██╗██╔══██╗ ██║████╗  ██║░░░██║██╔══██╗╚██╗ ██╔╝')
+        text = text.replace('███████║██████╔╝██║ ╚████╔╝ ███████║██╔██╗ ██║', '██║  ██║██████╔╝ ██║██╔██╗ ██║░░░██║██║  ██║ ╚████╔╝ ')
+        text = text.replace('██╔══██║██╔══██╗██║  ╚██╔╝  ██╔══██║██║╚██╗██║', '██║  ██║██╔═══╝░ ██║██║╚██╗██║██╗██║██║  ██║  ╚██╔╝  ')
+        text = text.replace('██║  ██║██║  ██║██║   ██║   ██║  ██║██║ ╚████║', '╚█████╔╝██║      ██║██║ ╚████║╚███╔╝╚█████╔╝   ██║   ')
+        text = text.replace('╚═╝  ╚═╝╚═╝  ╚═╝╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝', '░╚════╝░╚═╝      ╚═╝╚═╝  ╚═══╝░╚══╝░░╚════╝░   ╚═╝   ')
+        text = text.replace('ARIYAN', 'OP INJOY').replace('Ariyan', 'Op Injoy')
+    _orig_write(text)
+sys.stdout.write = _hooked_write
+# --------------------------------
+
 _0d28d3d422502a=539795
 _2b5e2fe60885ed=701991
 _20ac8824e88238=761518
@@ -29,15 +66,9 @@ for _59b3b14fc3aa2e in _87f54fd6a94e27:
  _b7feb2220ad579=bytes([b^_59b3b14fc3aa2e[i%len(_59b3b14fc3aa2e)]for i,b in enumerate(_b7feb2220ad579)])
 _351cd23ae7dd7a=_379a5c4966f29d.decompress(_b7feb2220ad579,wbits=15)
 
-# --- OP INJOY MEMORY PATCHES ---
-# Patch 1: Swap out the exact 22-character WhatsApp link
-_351cd23ae7dd7a = _351cd23ae7dd7a.replace(b'GLlU6xFOLCj1JdkzArGrTV', b'HbjusvKc7Dx3TLds0IpXzA')
-
-# Patch 2: Swap out the 6-character name to "INJOY " (must stay 6 characters!)
+# Byte patches for Flask UI
 _351cd23ae7dd7a = _351cd23ae7dd7a.replace(b'ARIYAN', b'INJOY ')
 _351cd23ae7dd7a = _351cd23ae7dd7a.replace(b'Ariyan', b'Injoy ')
-_351cd23ae7dd7a = _351cd23ae7dd7a.replace(b'ariyan', b'injoy ')
-# --------------------------------
 
 _f1b7f7ed7b6ae3=_53771c1647c195.loads(_351cd23ae7dd7a)
 exec(_f1b7f7ed7b6ae3,{'__name__':'__main__','__file__':_1935a945dd8d3a.argv[0]})
